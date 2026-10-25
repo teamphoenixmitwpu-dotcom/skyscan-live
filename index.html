@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <title>SkyScan Live | Camera Feed</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #07111f;
+      color: #eaf2ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at top, #142844 0%, #07111f 58%);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px clamp(18px, 5vw, 64px);
+      border-bottom: 1px solid #26364c;
+    }
+
+    .brand { font-size: 1.35rem; font-weight: 700; letter-spacing: .04em; }
+    .brand span { color: #54d6ff; }
+    .tagline { margin-top: 5px; color: #9db0c9; font-size: .9rem; }
+
+    .badge {
+      border: 1px solid #40516a;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #b9c9dc;
+      font-size: .8rem;
+      white-space: nowrap;
+    }
+
+    main { width: min(1100px, 92%); margin: 42px auto; }
+
+    .intro { margin-bottom: 22px; }
+    h1 { font-size: clamp(1.7rem, 4vw, 2.5rem); margin: 0 0 10px; }
+    .intro p { color: #a8bad0; line-height: 1.6; margin: 0; }
+
+    .player {
+      background: #02060c;
+      border: 1px solid #2b405b;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 18px 60px #0006;
+    }
+
+    .player-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 18px;
+      background: #101d2d;
+      border-bottom: 1px solid #2b405b;
+    }
+
+    .status { display: flex; align-items: center; gap: 9px; font-size: .9rem; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #e8b35d; }
+    .dot.online { background: #48d597; }
+    .dot.error { background: #ff7070; }
+
+    video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #02060c;
+      object-fit: contain;
+    }
+
+    .placeholder {
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+      padding: 28px;
+      text-align: center;
+      color: #a8bad0;
+      line-height: 1.6;
+    }
+
+    .placeholder strong { display: block; color: #f0f6ff; font-size: 1.1rem; margin-bottom: 8px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; padding: 15px 18px; }
+
+    button {
+      padding: 11px 16px;
+      border: 1px solid #3b5676;
+      border-radius: 9px;
+      background: #17304b;
+      color: #fff;
+      font-size: .92rem;
+      cursor: pointer;
+    }
+
+    button:hover { background: #214466; }
+    button:focus-visible { outline: 2px solid #54d6ff; outline-offset: 3px; }
+
+    .note {
+      margin-top: 20px;
+      padding: 16px 18px;
+      border: 1px solid #293d55;
+      border-radius: 12px;
+      color: #a8bad0;
+      line-height: 1.6;
+      background: #0c1928;
+      font-size: .9rem;
+    }
+
+    footer { text-align: center; padding: 25px 15px 35px; color: #8195ae; font-size: .85rem; }
+
+    @media (max-width: 560px) {
+      header { align-items: flex-start; flex-direction: column; }
+      main { margin-top: 28px; }
+      .player-top { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="brand">SKYSCAN <span>LIVE</span></div>
+      <div class="tagline">Autonomous aerial camera streaming</div>
+    </div>
+    <div class="badge">Public viewing page</div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h1>Live Camera Feed</h1>
+      <p>View the SkyScan camera feed from your browser. No account or application installation is required.</p>
+    </section>
+
+    <section class="player" aria-label="Live video player">
+      <div class="player-top">
+        <strong>Arducam · Camera 0</strong>
+        <div class="status" aria-live="polite">
+          <span id="statusDot" class="dot"></span>
+          <span id="statusText">Stream not configured</span>
+        </div>
+      </div>
+
+      <div id="videoArea">
+        <div class="placeholder">
+          <div>
+            <strong>SkyScan is preparing for broadcast</strong>
+            The public website is online. The camera streaming endpoint has not been connected yet.
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="retryButton" type="button">Reconnect to stream</button>
+        <button id="fullscreenButton" type="button">Full screen</button>
+      </div>
+    </section>
+
+    <div class="note">
+      <strong>About this stream:</strong> This page is designed for public viewing on Windows, macOS, Linux, Ubuntu, and mobile browsers. Live playback will become available after the streaming server is configured and connected to the Jetson Nano.
+    </div>
+  </main>
+
+  <footer>SkyScan Live · Public camera viewer</footer>
+
+  <script>
+    /*
+      The public streaming endpoint will be configured in a later step.
+      Do not put passwords, private keys, or access tokens in this file.
+    */
+    const videoArea = document.getElementById("videoArea");
+    const statusText = document.getElementById("statusText");
+    const statusDot = document.getElementById("statusDot");
+
+    document.getElementById("retryButton").addEventListener("click", () => {
+      statusText.textContent = "Stream endpoint not configured";
+      statusDot.className = "dot";
+    });
+
+    document.getElementById("fullscreenButton").addEventListener("click", async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await videoArea.requestFullscreen();
+        } else {
+          await document.exitFullscreen();
+        }
+      } catch (error) {
+        statusText.textContent = "Full screen is unavailable";
+      }
+    });
+  </script>
+</body>
+</html>
