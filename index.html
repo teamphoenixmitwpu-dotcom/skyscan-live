@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#07111f">
   <title>SkyScan Live | Camera Feed</title>
+
   <style>
     :root {
       color-scheme: dark;
@@ -13,7 +14,9 @@
       color: #eaf2ff;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -30,173 +33,398 @@
       border-bottom: 1px solid #26364c;
     }
 
-    .brand { font-size: 1.35rem; font-weight: 700; letter-spacing: .04em; }
-    .brand span { color: #54d6ff; }
-    .tagline { margin-top: 5px; color: #9db0c9; font-size: .9rem; }
+    .brand {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    .brand span {
+      color: #54d6ff;
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      color: #9bb0c9;
+      font-size: .9rem;
+    }
 
     .badge {
       border: 1px solid #40516a;
       border-radius: 999px;
       padding: 8px 12px;
-      color: #b9c9dc;
-      font-size: .8rem;
+      color: #c4d3e7;
+      font-size: .85rem;
       white-space: nowrap;
     }
 
-    main { width: min(1100px, 92%); margin: 42px auto; }
+    main {
+      width: min(1100px, 92%);
+      margin: 36px auto;
+    }
 
-    .intro { margin-bottom: 22px; }
-    h1 { font-size: clamp(1.7rem, 4vw, 2.5rem); margin: 0 0 10px; }
-    .intro p { color: #a8bad0; line-height: 1.6; margin: 0; }
+    .heading {
+      margin-bottom: 20px;
+    }
 
-    .player {
-      background: #02060c;
-      border: 1px solid #2b405b;
-      border-radius: 16px;
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+    }
+
+    .description {
+      margin: 0;
+      color: #a8bad0;
+      line-height: 1.6;
+    }
+
+    .player-card {
       overflow: hidden;
-      box-shadow: 0 18px 60px #0006;
+      border: 1px solid #2b4059;
+      border-radius: 16px;
+      background: #0b1625;
+      box-shadow: 0 18px 55px #0005;
     }
 
-    .player-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 15px 18px;
-      background: #101d2d;
-      border-bottom: 1px solid #2b405b;
+    .video-container {
+      position: relative;
+      width: 100%;
+      background: #000;
+      aspect-ratio: 16 / 9;
     }
-
-    .status { display: flex; align-items: center; gap: 9px; font-size: .9rem; }
-    .dot { width: 9px; height: 9px; border-radius: 50%; background: #e8b35d; }
-    .dot.online { background: #48d597; }
-    .dot.error { background: #ff7070; }
 
     video {
       display: block;
       width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #02060c;
+      height: 100%;
       object-fit: contain;
+      background: #000;
     }
 
-    .placeholder {
-      display: grid;
-      place-items: center;
-      min-height: 220px;
-      padding: 28px;
-      text-align: center;
-      color: #a8bad0;
-      line-height: 1.6;
+    .overlay {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border: 1px solid #ffffff20;
+      border-radius: 8px;
+      background: #07111fdc;
+      font-size: .82rem;
     }
 
-    .placeholder strong { display: block; color: #f0f6ff; font-size: 1.1rem; margin-bottom: 8px; }
-    .controls { display: flex; flex-wrap: wrap; gap: 10px; padding: 15px 18px; }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f5b942;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 16px;
+      border-top: 1px solid #26364c;
+    }
 
     button {
-      padding: 11px 16px;
-      border: 1px solid #3b5676;
+      border: 1px solid #405875;
       border-radius: 9px;
-      background: #17304b;
-      color: #fff;
+      padding: 10px 15px;
+      background: #142844;
+      color: #eaf2ff;
       font-size: .92rem;
       cursor: pointer;
     }
 
-    button:hover { background: #214466; }
-    button:focus-visible { outline: 2px solid #54d6ff; outline-offset: 3px; }
+    button:hover {
+      background: #1d395c;
+    }
 
-    .note {
-      margin-top: 20px;
-      padding: 16px 18px;
-      border: 1px solid #293d55;
-      border-radius: 12px;
+    button:focus-visible {
+      outline: 2px solid #54d6ff;
+      outline-offset: 3px;
+    }
+
+    .help {
+      margin-left: auto;
+      color: #93a8c1;
+      font-size: .85rem;
+    }
+
+    .notice {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: 1px solid #26364c;
+      border-radius: 10px;
       color: #a8bad0;
       line-height: 1.6;
-      background: #0c1928;
       font-size: .9rem;
     }
 
-    footer { text-align: center; padding: 25px 15px 35px; color: #8195ae; font-size: .85rem; }
+    footer {
+      padding: 24px 16px 32px;
+      color: #7187a1;
+      text-align: center;
+      font-size: .85rem;
+    }
 
-    @media (max-width: 560px) {
-      header { align-items: flex-start; flex-direction: column; }
-      main { margin-top: 28px; }
-      .player-top { align-items: flex-start; flex-direction: column; }
+    @media (max-width: 600px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .help {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      main {
+        margin-top: 24px;
+      }
     }
   </style>
 </head>
+
 <body>
   <header>
     <div>
-      <div class="brand">SKYSCAN <span>LIVE</span></div>
-      <div class="tagline">Autonomous aerial camera streaming</div>
+      <div class="brand">SkyScan <span>LIVE</span></div>
+      <div class="subtitle">Public camera streaming</div>
     </div>
-    <div class="badge">Public viewing page</div>
+    <div class="badge">Live camera viewer</div>
   </header>
 
   <main>
-    <section class="intro">
-      <h1>Live Camera Feed</h1>
-      <p>View the SkyScan camera feed from your browser. No account or application installation is required.</p>
+    <section class="heading">
+      <h1>SkyScan Camera Feed</h1>
+      <p class="description">
+        View the live camera stream from the SkyScan system.
+      </p>
     </section>
 
-    <section class="player" aria-label="Live video player">
-      <div class="player-top">
-        <strong>Arducam · Camera 0</strong>
-        <div class="status" aria-live="polite">
-          <span id="statusDot" class="dot"></span>
-          <span id="statusText">Stream not configured</span>
-        </div>
-      </div>
+    <section class="player-card">
+      <div class="video-container" id="videoContainer">
+        <video
+          id="video"
+          controls
+          autoplay
+          muted
+          playsinline
+          preload="none"
+        ></video>
 
-      <div id="videoArea">
-        <div class="placeholder">
-          <div>
-            <strong>SkyScan is preparing for broadcast</strong>
-            The public website is online. The camera streaming endpoint has not been connected yet.
-          </div>
+        <div class="overlay">
+          <span class="dot" id="statusDot"></span>
+          <span id="statusText">Connecting…</span>
         </div>
       </div>
 
       <div class="controls">
-        <button id="retryButton" type="button">Reconnect to stream</button>
-        <button id="fullscreenButton" type="button">Full screen</button>
+        <button id="reconnectButton" type="button">Reconnect stream</button>
+        <button id="fullscreenButton" type="button">Fullscreen</button>
+        <span class="help" id="helpText">
+          Connecting to the camera stream…
+        </span>
       </div>
     </section>
 
-    <div class="note">
-      <strong>About this stream:</strong> This page is designed for public viewing on Windows, macOS, Linux, Ubuntu, and mobile browsers. Live playback will become available after the streaming server is configured and connected to the Jetson Nano.
+    <div class="notice" id="notice">
+      The stream is available when the camera, Jetson streaming server,
+      and public tunnel are running. Initial connection may take a few
+      seconds.
     </div>
   </main>
 
-  <footer>SkyScan Live · Public camera viewer</footer>
+  <footer>
+    SkyScan Live · Public camera feed
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
 
   <script>
-    /*
-      The public streaming endpoint will be configured in a later step.
-      Do not put passwords, private keys, or access tokens in this file.
-    */
-    const videoArea = document.getElementById("videoArea");
+    const STREAM_URL =
+      "https://installed-revelation-complexity-comparisons.trycloudflare.com/cam/index.m3u8";
+
+    const video = document.getElementById("video");
     const statusText = document.getElementById("statusText");
     const statusDot = document.getElementById("statusDot");
+    const helpText = document.getElementById("helpText");
+    const notice = document.getElementById("notice");
+    const videoContainer = document.getElementById("videoContainer");
 
-    document.getElementById("retryButton").addEventListener("click", () => {
-      statusText.textContent = "Stream endpoint not configured";
-      statusDot.className = "dot";
-    });
+    let hls = null;
+    let retryTimer = null;
+    let retryCount = 0;
 
-    document.getElementById("fullscreenButton").addEventListener("click", async () => {
-      try {
-        if (!document.fullscreenElement) {
-          await videoArea.requestFullscreen();
-        } else {
-          await document.exitFullscreen();
-        }
-      } catch (error) {
-        statusText.textContent = "Full screen is unavailable";
+    function setStatus(text, color, help) {
+      statusText.textContent = text;
+      statusDot.style.background = color;
+      helpText.textContent = help;
+    }
+
+    function destroyPlayer() {
+      if (retryTimer) {
+        clearTimeout(retryTimer);
+        retryTimer = null;
       }
+
+      if (hls) {
+        hls.destroy();
+        hls = null;
+      }
+
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    }
+
+    function scheduleRetry() {
+      if (retryTimer) {
+        clearTimeout(retryTimer);
+      }
+
+      retryCount += 1;
+      const delay = Math.min(2000 * retryCount, 15000);
+
+      setStatus(
+        "Reconnecting…",
+        "#f5b942",
+        "Retrying in " + Math.round(delay / 1000) + " seconds"
+      );
+
+      retryTimer = setTimeout(startStream, delay);
+    }
+
+    function startStream() {
+      destroyPlayer();
+      retryCount = 0;
+
+      setStatus("Connecting…", "#f5b942", "Opening live stream");
+      notice.textContent =
+        "Connecting to the camera stream. Please wait.";
+
+      if (window.Hls && Hls.isSupported()) {
+        hls = new Hls({
+          enableWorker: true,
+          lowLatencyMode: false,
+          backBufferLength: 30,
+          manifestLoadingMaxRetry: 3,
+          levelLoadingMaxRetry: 3,
+          fragLoadingMaxRetry: 3
+        });
+
+        hls.loadSource(STREAM_URL);
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+          setStatus("Stream ready", "#38d996", "Live feed available");
+          notice.textContent =
+            "The stream loaded. If playback does not start, press Play.";
+          video.play().catch(function () {
+            setStatus(
+              "Ready to play",
+              "#38d996",
+              "Press Play if playback does not start"
+            );
+          });
+        });
+
+        hls.on(Hls.Events.ERROR, function (event, data) {
+          if (!data.fatal) {
+            return;
+          }
+
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+            setStatus(
+              "Network issue",
+              "#ff6b6b",
+              "Attempting to reconnect"
+            );
+            hls.startLoad();
+          } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+            hls.recoverMediaError();
+          } else {
+            destroyPlayer();
+            scheduleRetry();
+          }
+        });
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = STREAM_URL;
+
+        video.addEventListener("loadedmetadata", function onLoaded() {
+          video.removeEventListener("loadedmetadata", onLoaded);
+          setStatus("Stream ready", "#38d996", "Live feed available");
+          video.play().catch(function () {
+            setStatus(
+              "Ready to play",
+              "#38d996",
+              "Press Play if playback does not start"
+            );
+          });
+        });
+
+        video.addEventListener("error", function () {
+          setStatus(
+            "Stream unavailable",
+            "#ff6b6b",
+            "Check the server and public tunnel"
+          );
+        }, { once: true });
+      } else {
+        setStatus(
+          "Unsupported browser",
+          "#ff6b6b",
+          "This browser cannot play HLS directly"
+        );
+        notice.textContent =
+          "Try a current version of Chrome, Firefox, Edge, or Safari.";
+      }
+    }
+
+    video.addEventListener("playing", function () {
+      setStatus("Live", "#38d996", "Video is playing");
+      notice.textContent =
+        "The camera feed is playing. Stream delay may vary with network conditions.";
     });
+
+    video.addEventListener("waiting", function () {
+      setStatus("Buffering…", "#f5b942", "Waiting for video data");
+    });
+
+    video.addEventListener("stalled", function () {
+      setStatus("Connection stalled", "#f5b942", "Waiting for the stream");
+    });
+
+    document.getElementById("reconnectButton").addEventListener(
+      "click",
+      startStream
+    );
+
+    document.getElementById("fullscreenButton").addEventListener(
+      "click",
+      async function () {
+        try {
+          if (document.fullscreenElement) {
+            await document.exitFullscreen();
+          } else if (videoContainer.requestFullscreen) {
+            await videoContainer.requestFullscreen();
+          } else if (video.webkitEnterFullscreen) {
+            video.webkitEnterFullscreen();
+          }
+        } catch (error) {
+          notice.textContent =
+            "Fullscreen could not be opened. Try your browser's video controls.";
+        }
+      }
+    );
+
+    startStream();
   </script>
 </body>
 </html>
